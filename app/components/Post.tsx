@@ -1,34 +1,15 @@
 "use client";
 
-import { useState } from "react";
-
-import {
-  BadgeCheckIcon,
-  EllipsisIcon,
-  HeartIcon,
-  MessageCircleIcon,
-  RepeatIcon,
-  SendIcon,
-  UserPlusIcon,
-} from "lucide-react";
+import { BadgeCheckIcon, Trash } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { IPost } from "../pageComponents/Posts";
 
-const Post = () => {
-  const [liked, setLiked] = useState<boolean>(true);
-
+const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }) => {
   return (
     <Card>
       <CardHeader className="flex items-center justify-between gap-3">
@@ -48,9 +29,11 @@ const Post = () => {
             <CardDescription>@klevdev</CardDescription>
           </div>
         </div>
-        <Button size="sm" variant="outline">
-          View
-        </Button>
+        <div className="flex gap-2">
+          <Button size="sm" onClick={() => onDelete(post._id)}>
+            <Trash />
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-6 text-sm">
         <Image
@@ -61,18 +44,8 @@ const Post = () => {
           objectFit="cover"
           height={200}
         />
-        <p>
-          Lost in the colors of the night 🌌✨ Sometimes the blur reveals more than clarity.{" "}
-          <a href="#" className="text-sky-600 dark:text-sky-400">
-            #AbstractVibes
-          </a>{" "}
-          <a href="#" className="text-sky-600 dark:text-sky-400">
-            #Dreamscape
-          </a>{" "}
-          <a href="#" className="text-sky-600 dark:text-sky-400">
-            #VisualPoetry
-          </a>
-        </p>
+        <p>Lost in the colors of the night 🌌✨ Sometimes the blur reveals more than clarity. </p>
+        <Button variant="outline">View Post</Button>
       </CardContent>
       {/* <CardFooter className="flex items-center gap-1">
         <Button variant="ghost" size="sm" onClick={() => setLiked(!liked)}>

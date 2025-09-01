@@ -5,67 +5,30 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BadgeCheckIcon } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import TagsForm from "../pageComponents/TagsForm";
+import { postSchema } from "../zod/schemas";
 
-const formSchema = z.object({
-  title: z.string().min(2, {
-    message: "Title must be at least 2 characters.",
-  }),
-});
-
-export function PostForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+export function PostForm({
+  onAdd,
+}: {
+  onAdd: (values: z.infer<typeof postSchema>) => Promise<void>;
+}) {
+  const form = useForm<z.infer<typeof postSchema>>({
+    resolver: zodResolver(postSchema),
     defaultValues: {
       title: "",
+      tags: [],
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-
-    const { title } = values;
-
-    try {
-      const response = await fetch("/api/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title }),
-      });
-      if (response.ok) {
-      } else {
-        console.error("Failed to add todo");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onAdd)} className="space-y-8">
         <Card>
           <CardHeader className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
@@ -84,15 +47,12 @@ export function PostForm() {
                 <CardDescription>@klevdev</CardDescription>
               </div>
             </div>
-            <Button size="sm" type="submit">
-              New Post
-            </Button>
           </CardHeader>
           <CardContent className="space-y-6 text-sm">
             <div className="flex items-center justify-center w-full">
               <label
                 htmlFor="dropzone-file"
-                className="flex flex-col items-center justify-center w-full h-[183px] border-2 border-primary-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 "
+                className="flex flex-col items-center justify-center w-full h-full border-2 border-primary-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 "
               >
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                   <svg
@@ -126,12 +86,17 @@ export function PostForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Textarea placeholder="Description" {...field} />
+                    <Textarea placeholder="Description" className="max-h-10" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            <TagsForm />
+
+            <Button size="sm" type="submit">
+              New Post
+            </Button>
           </CardContent>
         </Card>
       </form>
