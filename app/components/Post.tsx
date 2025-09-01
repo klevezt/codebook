@@ -1,17 +1,23 @@
-"use client";
-
 import { BadgeCheckIcon, Trash } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 import Image from "next/image";
 import { IPost } from "../pageComponents/Posts";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }) => {
   return (
-    <Card>
+    <Card className="h-fit">
       <CardHeader className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <Avatar className="ring-ring ring-2">
@@ -36,35 +42,19 @@ const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }
         </div>
       </CardHeader>
       <CardContent className="space-y-6 text-sm">
-        <Image
-          src="https://cdn.shadcnstudio.com/ss-assets/components/card/image-6.png"
-          alt="Banner"
-          className="aspect-video w-full rounded-md object-cover"
-          width={200}
-          objectFit="cover"
-          height={200}
-        />
+        <AspectRatio ratio={16 / 9}>
+          <Image
+            src="https://cdn.shadcnstudio.com/ss-assets/components/card/image-6.png"
+            alt="Banner"
+            className="aspect-video w-full rounded-md object-cover"
+            fill
+          />
+        </AspectRatio>
         <p>Lost in the colors of the night 🌌✨ Sometimes the blur reveals more than clarity. </p>
-        <Button variant="outline">View Post</Button>
       </CardContent>
-      {/* <CardFooter className="flex items-center gap-1">
-        <Button variant="ghost" size="sm" onClick={() => setLiked(!liked)}>
-          <HeartIcon className={cn("size-4", liked && "fill-destructive stroke-destructive")} />
-          2.1K
-        </Button>
-        <Button variant="ghost" size="sm">
-          <MessageCircleIcon className="size-4" />
-          1.4K
-        </Button>
-        <Button variant="ghost" size="sm">
-          <RepeatIcon className="size-4" />
-          669
-        </Button>
-        <Button variant="ghost" size="sm">
-          <SendIcon className="size-4" />
-          1.1K
-        </Button>
-      </CardFooter> */}
+      <CardFooter>
+        <Button variant="outline">View Post</Button>
+      </CardFooter>
     </Card>
   );
 };

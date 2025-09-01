@@ -8,6 +8,8 @@ const TagsForm = () => {
   return (
     <div className="flex flex-col gap-4">
       <Input
+        id="tags"
+        placeholder="Add tag and hit enter"
         value={tagValue}
         onChange={(e) => setTagValue(e.target.value)}
         onKeyDown={(e) => {
@@ -19,7 +21,7 @@ const TagsForm = () => {
       />
       <div className="flex gap-2">
         {tags.map((tag) => (
-          <Badge variant="outline" key={tag}>
+          <Badge variant="secondary" key={tag}>
             {tag}
           </Badge>
         ))}
