@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
   --background: #f8f8f8;
@@ -16,8 +19,8 @@
   --accent: #fef2c5;
   --accent-foreground: #7f201f;
   --destructive: #971b1b;
-  --border: #f6ead5;
-  --input: #f6ead5;
+  --border: #971b1b;
+  --input: #971b1b;
   --ring: #9e2c2c;
   --chart-1: #ba1f1e;
   --chart-2: #9e2c2c;
@@ -37,16 +40,16 @@
   --font-serif: Libre Baskerville, serif;
   --font-mono: IBM Plex Mono, monospace;
 
-  --radius: 0.375rem;
+  --radius: 0.625rem;
 
-  --shadow-2xs: 1px 1px 16px -2px #4b1111;
-  --shadow-xs: 1px 1px 16px -2px #4b1111;
-  --shadow-sm: 1px 1px 16px -2px #4b1111, 1px 1px 2px -3px #4b1111;
-  --shadow: 1px 1px 16px -2px #4b1111, 1px 1px 2px -3px #4b1111;
-  --shadow-md: 1px 1px 16px -2px #4b1111, 1px 2px 4px -3px #4b1111;
-  --shadow-lg: 1px 1px 16px -2px #4b1111, 1px 4px 6px -3px #4b1111;
-  --shadow-xl: 1px 1px 16px -2px #4b1111, 1px 8px 10px -3px #4b1111;
-  --shadow-2xl: 1px 1px 16px -2px #4b1111;
+  --shadow-2xs: 1px 1px 10px -2px #4b1111;
+  --shadow-xs: 1px 1px 10px -2px #4b1111;
+  --shadow-sm: 1px 1px 10px -2px #4b1111, 1px 1px 2px -3px #4b1111;
+  --shadow: 1px 1px 10px -2px #4b1111, 1px 1px 2px -3px #4b1111;
+  --shadow-md: 1px 1px 10px -2px #4b1111, 1px 2px 4px -3px #4b1111;
+  --shadow-lg: 1px 1px 10px -2px #4b1111, 1px 4px 6px -3px #4b1111;
+  --shadow-xl: 1px 1px 10px -2px #4b1111, 1px 8px 10px -3px #4b1111;
+  --shadow-2xl: 1px 1px 10px -2px #4b1111;
 }
 
 .dark {
@@ -144,8 +147,11 @@
   --shadow-2xl: var(--shadow-2xl);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

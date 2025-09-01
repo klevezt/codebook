@@ -1,7 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  reactStrictMode: false,
+};
+
+module.exports = {
+  images: {
+    domains: ["cdn.shadcnstudio.com"],
+  },
 };
 
 export default nextConfig;

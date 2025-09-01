@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Post from "../components/Post";
+import { PostForm } from "../components/PostForm";
 
 interface Todo {
   _id: string;
@@ -16,7 +18,6 @@ export default function PostList() {
       try {
         const response = await fetch("/api/posts");
         const data = await response.json();
-        console.log({ data });
         setTodos(data);
       } catch (error) {
         console.error("Error fetching todos:", error);
@@ -29,17 +30,17 @@ export default function PostList() {
 
   return (
     <div>
-      <h2>Todo List</h2>
       {loading ? (
         <p>Loading...</p>
       ) : todos.length > 0 ? (
-        <ul>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+          <PostForm />
           {todos.map((todo) => (
-            <li key={todo._id}>{todo.title}</li>
+            <Post key={todo._id} />
           ))}
-        </ul>
+        </div>
       ) : (
-        <p>No todos found</p>
+        <p>No posts found</p>
       )}
     </div>
   );

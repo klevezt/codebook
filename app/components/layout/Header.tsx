@@ -13,23 +13,13 @@ const Header: React.FC = () => {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <div className="relative">
-            <Image
-              src="/logo.png"
-              alt="logo"
-              width={150}
-              height={64}
-              objectFit="contain"
-              className="rounded"
-            />
+            <Image src="/logo.png" alt="logo" width={150} height={64} objectFit="contain" />
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
             <a href="#home" className="text-gray-700 hover:text-indigo-600 transition">
-              Home
-            </a>
-            <a href="#about" className="text-gray-700 hover:text-indigo-600 transition">
-              About
+              Posts
             </a>
           </nav>
 
@@ -48,10 +38,7 @@ const Header: React.FC = () => {
         <div className="md:hidden bg-white shadow-md">
           <nav className="flex flex-col space-y-4 p-4">
             <a href="#home" className="text-gray-700 hover:text-indigo-600">
-              Home
-            </a>
-            <a href="#about" className="text-gray-700 hover:text-indigo-600">
-              About
+              Posts
             </a>
           </nav>
         </div>
