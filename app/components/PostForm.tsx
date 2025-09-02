@@ -22,6 +22,7 @@ export function PostForm({
   onAdd: (values: z.infer<typeof postSchema>) => Promise<void>;
 }) {
   const [preview, setPreview] = useState<string | null>(null);
+
   const form = useForm<z.infer<typeof postSchema>>({
     resolver: zodResolver(postSchema),
     defaultValues: {
@@ -34,8 +35,14 @@ export function PostForm({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const url = URL.createObjectURL(file);
-      setPreview(url);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      setPreview(URL.createObjectURL(e.dataTransfer.files[0]));
     }
   };
 
@@ -74,6 +81,10 @@ export function PostForm({
                   <label
                     htmlFor="image"
                     className="flex flex-col items-center justify-center w-full h-full border-2 border-primary-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 "
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                    }}
+                    onDrop={handleDrop}
                   >
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                       <svg

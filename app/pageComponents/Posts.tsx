@@ -55,14 +55,18 @@ export default function PostList() {
 
   async function onAdd(values: z.infer<typeof postSchema>) {
     const { description, image } = values;
-    const img = URL.createObjectURL(image);
     setLoading(true);
-    console.log({ values, img });
+    const payload: z.infer<typeof postSchema> = { description };
+
+    if (image instanceof File) {
+      payload.image = URL.createObjectURL(image);
+    }
+
     try {
       const response = await fetch("/api/posts", {
         method: "POST",
         headers: { "Content-Type": "multipart/form-data" },
-        body: JSON.stringify({ description, image: img }),
+        body: JSON.stringify(payload),
       });
       if (response.ok) {
       } else {

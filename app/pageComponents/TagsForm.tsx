@@ -1,10 +1,14 @@
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { X } from "lucide-react";
 import React, { useState } from "react";
 
 const TagsForm = () => {
   const [tags, setTags] = useState<string[]>([]);
   const [tagValue, setTagValue] = useState("");
+
+  const removeTag = (tag: string) => setTags((prev) => prev.filter((el) => el !== tag));
+
   return (
     <div className="flex flex-col gap-4">
       <Input
@@ -21,8 +25,15 @@ const TagsForm = () => {
       />
       <div className="flex gap-2">
         {tags.map((tag) => (
-          <Badge variant="secondary" key={tag}>
+          <Badge
+            variant="secondary"
+            className="flex justify-between items-center text-md "
+            key={tag}
+          >
             {tag}
+            <span className="hover:cursor-pointer text-md" onClick={() => removeTag(tag)}>
+              <X size="12" />
+            </span>
           </Badge>
         ))}
       </div>
