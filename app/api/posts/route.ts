@@ -10,16 +10,16 @@ export async function GET() {
 export async function POST(req: Request) {
   const body = await req.json();
 
-  const { title } = body;
-  if (!title)
+  const { description, image } = body;
+  if (!description)
     return Response.json(
-      { success: false, message: "Title is required" },
+      { success: false, message: "Description is required" },
       {
         status: 400,
       }
     );
 
-  const newPost = await Post.create({ title });
+  const newPost = await Post.create({ description, image });
   return Response.json(
     { success: false, data: newPost },
     {

@@ -9,8 +9,9 @@ import { postSchema } from "../zod/schemas";
 
 export interface IPost {
   _id: string;
-  title: string;
+  description: string;
   completed: boolean;
+  image?: string;
 }
 export default function PostList() {
   const [posts, setTodos] = useState<IPost[]>([]);
@@ -53,14 +54,15 @@ export default function PostList() {
   };
 
   async function onAdd(values: z.infer<typeof postSchema>) {
-    const { title } = values;
+    const { description, image } = values;
+    const img = URL.createObjectURL(image);
     setLoading(true);
-
+    console.log({ values, img });
     try {
       const response = await fetch("/api/posts", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title }),
+        headers: { "Content-Type": "multipart/form-data" },
+        body: JSON.stringify({ description, image: img }),
       });
       if (response.ok) {
       } else {
