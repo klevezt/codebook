@@ -14,6 +14,7 @@ import {
 import Image from "next/image";
 import { IPost } from "../pageComponents/Posts";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }) => {
   return (
@@ -55,6 +56,35 @@ const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }
         <Button variant="outline">View Post</Button>
       </CardFooter>
     </Card>
+  );
+};
+
+export const SkeletonPost = () => {
+  return (
+    <>
+      <Card className="h-fit">
+        <CardHeader className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <Avatar>
+              <Skeleton className="h-[200px] w-full rounded-full" />
+            </Avatar>
+            <div className="flex flex-col gap-0.5 w-[80px] ">
+              <CardTitle className="flex items-center gap-1 text-sm">
+                <Skeleton className="h-[12px] w-full rounded-full" />
+              </CardTitle>
+              <CardDescription>
+                <Skeleton className="h-[12px] w-full rounded-full" />
+              </CardDescription>
+            </div>
+          </div>
+          <Skeleton className="h-[20px] w-[50px] rounded-full" />
+        </CardHeader>
+        <CardContent className="space-y-6 text-sm">
+          <Skeleton className="h-[200px] w-full rounded mb-4" />
+          <Skeleton className="h-[50px] w-full rounded" />
+        </CardContent>
+      </Card>
+    </>
   );
 };
 

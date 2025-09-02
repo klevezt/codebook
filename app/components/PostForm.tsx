@@ -49,7 +49,11 @@ export function PostForm({
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onAdd)}
+        onSubmit={form.handleSubmit((values) => {
+          onAdd(values);
+          form.reset();
+          setPreview("");
+        })}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault();

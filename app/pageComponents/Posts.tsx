@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Post from "../components/Post";
+import Post, { SkeletonPost } from "../components/Post";
 import { PostForm } from "../components/PostForm";
 import { toast } from "sonner";
 import z from "zod";
@@ -69,6 +69,7 @@ export default function PostList() {
         body: JSON.stringify(payload),
       });
       if (response.ok) {
+        
       } else {
         console.error("Failed to add post");
       }
@@ -82,18 +83,13 @@ export default function PostList() {
   }
 
   return (
-    <div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+      <PostForm onAdd={onAdd} />
       {loading ? (
-        <p>Loading...</p>
+        <SkeletonPost />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-          <PostForm onAdd={onAdd} />
-          {posts.length > 0 ? (
-            posts.map((post) => <Post key={post._id} post={post} onDelete={onDelete} />)
-          ) : (
-            <p>No posts found</p>
-          )}
-        </div>
+        posts.length > 0 &&
+        posts.map((post) => <Post key={post._id} post={post} onDelete={onDelete} />)
       )}
     </div>
   );
