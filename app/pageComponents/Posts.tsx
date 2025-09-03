@@ -53,14 +53,33 @@ export default function PostList() {
     }
   };
 
+  const toBase64 = (file: File) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+
+      fileReader.readAsDataURL(file);
+
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
   async function onAdd(values: z.infer<typeof postSchema>) {
     const { description, image } = values;
+
     setLoading(true);
     const payload: z.infer<typeof postSchema> = { description };
 
     if (image instanceof File) {
-      payload.image = URL.createObjectURL(image);
+      payload.image = await toBase64(image);
     }
+
+    console.log({ payload });
 
     try {
       const response = await fetch("/api/posts", {
@@ -69,7 +88,6 @@ export default function PostList() {
         body: JSON.stringify(payload),
       });
       if (response.ok) {
-        
       } else {
         console.error("Failed to add post");
       }
