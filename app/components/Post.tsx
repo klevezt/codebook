@@ -1,15 +1,8 @@
-import { EllipsisIcon, PencilLine, Trash, Trash2, Upload } from "lucide-react";
+import { BookOpen, EllipsisIcon, PencilLine, Trash2 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +17,7 @@ import { IPost } from "../pageComponents/Posts";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }) => {
   return (
@@ -43,23 +37,34 @@ const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }
           </div>
         </div>
         <div className="flex gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline" size="icon" aria-label="Toggle menu" className="border-0">
+                <BookOpen className="size-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Open post</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline" size="icon" aria-label="Toggle menu" className="border-0">
+                <PencilLine className="size-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Edit post</p>
+            </TooltipContent>
+          </Tooltip>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" aria-label="Toggle menu">
+              <Button variant="outline" size="icon" aria-label="Toggle menu" className="border-0">
                 <EllipsisIcon className="size-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-34">
+            <DropdownMenuContent align="end" className="w-34">
               <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <PencilLine />
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Upload />
-                  Share
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem variant="destructive" onClick={() => onDelete(post._id)}>
                   <Trash2 />
                   <span>Delete</span>
