@@ -1,4 +1,4 @@
-import { Trash } from "lucide-react";
+import { EllipsisIcon, PencilLine, Trash, Trash2, Upload } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -10,11 +10,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import Image from "next/image";
 import { IPost } from "../pageComponents/Posts";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 
 const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }) => {
   return (
@@ -24,7 +33,7 @@ const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }
           <Avatar className="ring-ring ring-2">
             <AvatarImage
               src="https://cdn.shadcnstudio.com/ss-assets/avatar/avatar-5.png"
-              alt="Hallie Richards"
+              alt="Avatars"
             />
             <AvatarFallback className="text-xs">PG</AvatarFallback>
           </Avatar>
@@ -34,9 +43,30 @@ const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }
           </div>
         </div>
         <div className="flex gap-2">
-          <Button size="sm" onClick={() => onDelete(post._id)}>
-            <Trash />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" aria-label="Toggle menu">
+                <EllipsisIcon className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-34">
+              <DropdownMenuGroup>
+                <DropdownMenuItem>
+                  <PencilLine />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Upload />
+                  Share
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem variant="destructive" onClick={() => onDelete(post._id)}>
+                  <Trash2 />
+                  <span>Delete</span>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </CardHeader>
       <CardContent className="space-y-6 text-sm">
@@ -45,16 +75,20 @@ const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }
             <Image
               src={post.image}
               alt="Banner"
-              className="aspect-video w-full rounded-md object-contain"
+              className="aspect-video w-full rounded-md object-cover object-tops"
               fill
             />
           </AspectRatio>
         )}
         <p>{post.description}</p>
+        <div className="flex gap-2">
+          {post.tags.map((tag) => (
+            <Badge variant="secondary" className="flex justify-between items-center " key={tag}>
+              {tag}
+            </Badge>
+          ))}
+        </div>
       </CardContent>
-      <CardFooter>
-        <Button variant="outline">View Post</Button>
-      </CardFooter>
     </Card>
   );
 };

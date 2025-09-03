@@ -6,12 +6,14 @@ import { PostForm } from "../components/PostForm";
 import { toast } from "sonner";
 import z from "zod";
 import { postSchema } from "../zod/schemas";
+import { toBase64 } from "@/lib/utils";
 
 export interface IPost {
   _id: string;
   description: string;
   completed: boolean;
   image?: string;
+  tags: string[] | [];
 }
 export default function PostList() {
   const [posts, setTodos] = useState<IPost[]>([]);
@@ -53,25 +55,8 @@ export default function PostList() {
     }
   };
 
-  const toBase64 = (file: File) => {
-    return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-
-      fileReader.readAsDataURL(file);
-
-      fileReader.onload = () => {
-        resolve(fileReader.result);
-      };
-
-      fileReader.onerror = (error) => {
-        reject(error);
-      };
-    });
-  };
-
-  async function onAdd(values: z.infer<typeof postSchema>) {
-    const { description, image } = values;
-
+  const onAdd = async (values: z.infer<typeof postSchema>) => {
+    const { description, image, tags } = values;
     setLoading(true);
     const payload: z.infer<typeof postSchema> = { description };
 
@@ -79,7 +64,9 @@ export default function PostList() {
       payload.image = await toBase64(image);
     }
 
-    console.log({ payload });
+    if (tags && tags.length > 0) {
+      payload.tags = tags;
+    }
 
     try {
       const response = await fetch("/api/posts", {
@@ -98,7 +85,7 @@ export default function PostList() {
       setSignal((x) => !x);
       toast.success("Post has been created successfully");
     }
-  }
+  };
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">

@@ -10,7 +10,7 @@ export async function GET() {
 export async function POST(req: Request) {
   const body = await req.json();
 
-  const { description, image } = body;
+  const { description } = body;
   if (!description)
     return Response.json(
       { success: false, message: "Description is required" },
@@ -19,7 +19,7 @@ export async function POST(req: Request) {
       }
     );
 
-  const newPost = await Post.create({ description, image });
+  const newPost = await Post.create({ ...body });
   return Response.json(
     { success: false, data: newPost },
     {

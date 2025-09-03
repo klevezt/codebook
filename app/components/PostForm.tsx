@@ -9,12 +9,13 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
-import TagsForm from "../pageComponents/TagsForm";
 import { postSchema } from "../zod/schemas";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useState } from "react";
 import Image from "next/image";
 import { X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 
 export function PostForm({
   onAdd,
@@ -22,6 +23,8 @@ export function PostForm({
   onAdd: (values: z.infer<typeof postSchema>) => Promise<void>;
 }) {
   const [preview, setPreview] = useState<string | null>(null);
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagValue, setTagValue] = useState("");
 
   const form = useForm<z.infer<typeof postSchema>>({
     resolver: zodResolver(postSchema),
@@ -45,14 +48,16 @@ export function PostForm({
       setPreview(URL.createObjectURL(e.dataTransfer.files[0]));
     }
   };
+  const removeTag = (tag: string) => setTags((prev) => prev.filter((el) => el !== tag));
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit((values) => {
-          onAdd(values);
+          onAdd({ ...values, tags });
           form.reset();
           setPreview("");
+          setTags([]);
         })}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
@@ -68,7 +73,7 @@ export function PostForm({
               <Avatar className="ring-ring ring-2">
                 <AvatarImage
                   src="https://cdn.shadcnstudio.com/ss-assets/avatar/avatar-5.png"
-                  alt="Hallie Richards"
+                  alt="Avatar"
                 />
                 <AvatarFallback className="text-xs">PG</AvatarFallback>
               </Avatar>
@@ -157,7 +162,37 @@ export function PostForm({
                 </FormItem>
               )}
             />
-            <TagsForm />
+            <>
+              <FormItem>
+                <FormControl>
+                  <Input
+                    placeholder="Add tag and hit enter"
+                    value={tagValue}
+                    onChange={(e) => setTagValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        setTags((prev) => [...prev, tagValue]);
+                        setTagValue("");
+                      }
+                    }}
+                  />
+                </FormControl>
+              </FormItem>
+              <div className="flex gap-2">
+                {tags.map((tag) => (
+                  <Badge
+                    variant="secondary"
+                    className="flex justify-between items-center text-md "
+                    key={tag}
+                  >
+                    {tag}
+                    <span className="hover:cursor-pointer text-md" onClick={() => removeTag(tag)}>
+                      <X size="12" />
+                    </span>
+                  </Badge>
+                ))}
+              </div>
+            </>
             <Button size="sm" type="submit">
               New Post
             </Button>
