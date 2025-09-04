@@ -178,23 +178,25 @@ export function PostForm({
                   />
                 </FormControl>
               </FormItem>
-              <div className="flex gap-2">
-                {tags.map((tag) => (
-                  <Badge
-                    variant="secondary"
-                    className="flex justify-between items-center text-md "
-                    key={tag}
-                  >
-                    {tag}
-                    <span className="hover:cursor-pointer text-md" onClick={() => removeTag(tag)}>
-                      <X size="12" />
-                    </span>
-                  </Badge>
-                ))}
-              </div>
+              {tags.length > 0 && (
+                <div className="flex gap-2">
+                  {tags.map((tag) => (
+                    <Badge
+                      variant="secondary"
+                      className="flex justify-between items-center text-md "
+                      key={tag}
+                    >
+                      {tag}
+                      <span className="hover:cursor-pointer text-md" onClick={() => removeTag(tag)}>
+                        <X size="12" />
+                      </span>
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </>
             <Button size="sm" type="submit">
-              New Post
+              Submit
             </Button>
           </CardContent>
         </Card>

@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuSeparator,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
@@ -85,14 +84,20 @@ const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }
             />
           </AspectRatio>
         )}
-        <p>{post.description}</p>
-        <div className="flex gap-2">
+        <p className="line-clamp-8 whitespace-pre-line ">{post.description}</p>
+        <div className="flex items-center gap-2 text-xs">
+          <span>Tags:</span>
           {post.tags.map((tag) => (
-            <Badge variant="secondary" className="flex justify-between items-center " key={tag}>
+            <Badge
+              variant="secondary"
+              className="flex justify-between items-center text-xs"
+              key={tag}
+            >
               {tag}
             </Badge>
           ))}
         </div>
+        {post.description.length > 100 && <Button size="sm">View post</Button>}
       </CardContent>
     </Card>
   );
