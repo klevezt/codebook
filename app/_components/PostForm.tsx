@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
-import { postSchema } from "../zod/schemas";
+import { postSchema } from "../_zod/schemas";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useState } from "react";
 import Image from "next/image";

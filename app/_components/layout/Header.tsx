@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import Image from "next/image";
 import { SearchInput } from "../molecules/Input";
+import Link from "next/link";
 
 const Header: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -14,7 +15,9 @@ const Header: React.FC = () => {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <div className="relative">
-            <Image src="/logo.png" alt="logo" width={150} height={64} objectFit="contain" />
+            <Link href={"/"}>
+              <Image src="/logo.png" alt="logo" width={150} height={64} objectFit="contain" />
+            </Link>
           </div>
 
           {/* Desktop Navigation */}

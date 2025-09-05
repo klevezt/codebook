@@ -1,4 +1,4 @@
-import PostList from "./pageComponents/Posts";
+import PostList from "./_pageComponents/Posts";
 
 export default function Home() {
   return (

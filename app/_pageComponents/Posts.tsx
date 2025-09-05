@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Post, { SkeletonPost } from "../components/Post";
-import { PostForm } from "../components/PostForm";
+import Post, { SkeletonPost } from "../_components/Post";
+import { PostForm } from "../_components/PostForm";
 import { toast } from "sonner";
 import z from "zod";
-import { postSchema } from "../zod/schemas";
+import { postSchema } from "../_zod/schemas";
 import { toBase64 } from "@/lib/utils";
 
 export interface IPost {
@@ -14,6 +14,7 @@ export interface IPost {
   completed: boolean;
   image?: string;
   tags: string[] | [];
+  createdAt: Date;
 }
 export default function PostList() {
   const [posts, setTodos] = useState<IPost[]>([]);
@@ -21,7 +22,7 @@ export default function PostList() {
   const [signal, setSignal] = useState(true);
 
   useEffect(() => {
-    async function fetchPosts() {
+    (async () => {
       setLoading(true);
       try {
         const response = await fetch("/api/posts");
@@ -32,8 +33,7 @@ export default function PostList() {
       } finally {
         setLoading(false);
       }
-    }
-    fetchPosts();
+    })();
   }, [signal]);
 
   const onDelete = async (postId: string) => {

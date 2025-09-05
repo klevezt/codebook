@@ -12,11 +12,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import Image from "next/image";
-import { IPost } from "../pageComponents/Posts";
+import { IPost } from "../_pageComponents/Posts";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import Link from "next/link";
 
 const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }) => {
   return (
@@ -38,9 +39,11 @@ const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }
         <div className="flex gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="outline" size="icon" aria-label="Toggle menu" className="border-0">
-                <BookOpen className="size-4" />
-              </Button>
+              <Link href={`/post/${post._id}`}>
+                <Button variant="outline" size="icon" aria-label="Toggle menu" className="border-0">
+                  <BookOpen className="size-4" />
+                </Button>
+              </Link>
             </TooltipTrigger>
             <TooltipContent>
               <p>Open post</p>
@@ -85,19 +88,23 @@ const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }
           </AspectRatio>
         )}
         <p className="line-clamp-8 whitespace-pre-line ">{post.description}</p>
-        <div className="flex items-center gap-2 text-xs">
-          <span>Tags:</span>
-          {post.tags.map((tag) => (
-            <Badge
-              variant="secondary"
-              className="flex justify-between items-center text-xs"
-              key={tag}
-            >
-              {tag}
-            </Badge>
-          ))}
-        </div>
-        {post.description.length > 100 && <Button size="sm">View post</Button>}
+        {post.tags.length > 0 && (
+          <div className="flex items-center gap-2 text-xs">
+            <span>Tags:</span>
+            {post.tags.map((tag) => (
+              <Badge
+                variant="secondary"
+                className="flex justify-between items-center text-xs"
+                key={tag}
+              >
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        )}
+        <Link href={`/post/${post._id}`}>
+          <Button size="sm">View post</Button>
+        </Link>
       </CardContent>
     </Card>
   );
