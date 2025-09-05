@@ -179,7 +179,7 @@ export function PostForm({
                 </FormControl>
               </FormItem>
               {tags.length > 0 && (
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   {tags.map((tag) => (
                     <Badge
                       variant="secondary"

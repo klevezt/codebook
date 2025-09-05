@@ -94,7 +94,9 @@ export default function PostList() {
         <SkeletonPost />
       ) : (
         posts.length > 0 &&
-        posts.map((post) => <Post key={post._id} post={post} onDelete={onDelete} />)
+        posts
+          .toSorted((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .map((post) => <Post key={post._id} post={post} onDelete={onDelete} />)
       )}
     </div>
   );
