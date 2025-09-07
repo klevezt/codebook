@@ -21,25 +21,25 @@ function useService<T>({
   watchers = {},
   shouldFetch = true,
 }: ServiceProps) {
-  const fetcher = () => fetch(url, { ...params }).then((res) => res.json());
+  const fetcher = () => fetch(url, { method, ...params }).then((res) => res.json());
 
-  const { data, error, isLoading, mutate } = useSWR<T>(
+  const { data, error, isValidating, mutate } = useSWR<T>(
     shouldFetch ? [url, Object.values(watchers)] : null,
     fetcher,
     {
       onError: (err) => {
         console.error(err);
       },
-      shouldRetryOnError: false,
       revalidateOnFocus: false,
+      revalidateOnReconnect: false,
       ...options,
     }
   );
 
   return {
     data,
-    isLoading,
-    isError: error,
+    isValidating,
+    isError: !!error,
     mutate,
   };
 }

@@ -18,9 +18,12 @@ const SinglePost = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);
   const router = useRouter();
 
-  const { data, isError, isLoading } = useService<IPost[]>({ url: `/api/single-post/${id}` });
+  const { data, isError, isValidating } = useService<IPost[]>({
+    url: `/api/single-post/${id}`,
+    options: { dedupingInterval: 60000 * 60 },
+  });
 
-  if (!data || isLoading) return <div>Loading...</div>;
+  if (!data || isValidating) return <div>Loading...</div>;
 
   const { description, image, createdAt, tags } = data[0] ?? {};
 

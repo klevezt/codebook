@@ -39,9 +39,9 @@ const SinglePost = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);
   const router = useRouter();
 
-  const { data, isLoading } = useService<IPost[]>({ url: `/api/single-post/${id}` });
+  const { data, isValidating } = useService<IPost[]>({ url: `/api/single-post/${id}` });
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isValidating) return <div>Loading...</div>;
 
   return (
     <>

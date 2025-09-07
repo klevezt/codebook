@@ -90,7 +90,7 @@ const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }
           </AspectRatio>
         )}
         <p className="line-clamp-5 whitespace-pre-line ">{post.description}</p>
-        {post.tags.length > 0 && (
+        {post.tags && post.tags.length > 0 && (
           <div className="flex items-center gap-2 text-xs">
             <span>Tags:</span>
             {post.tags.map((tag) => (

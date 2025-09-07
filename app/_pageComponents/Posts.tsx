@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Post, { SkeletonPost } from "../_components/Post";
 import { PostForm } from "../_components/PostForm";
 import { toast } from "sonner";
 import z from "zod";
 import { postSchema } from "../_zod/schemas";
 import { toBase64 } from "@/lib/utils";
+import useService from "@/hooks/useService";
+import useSWRMutation from "swr/mutation";
+import { HTTP_METHOD } from "next/dist/server/web/http";
 
 export interface IPost {
   _id: string;
@@ -16,48 +18,63 @@ export interface IPost {
   tags: string[] | [];
   createdAt: Date;
 }
-export default function PostList() {
-  const [posts, setTodos] = useState<IPost[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [signal, setSignal] = useState(true);
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      try {
-        const response = await fetch("/api/posts");
-        const data = await response.json();
-        setTodos(data);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [signal]);
+async function fetcher(
+  url: string,
+  {
+    arg,
+  }: {
+    arg: {
+      method: HTTP_METHOD;
+      description?: string;
+      _id?: string;
+      tags?: string[];
+      image?: File;
+    };
+  }
+) {
+  const { method, ...restArgs } = arg;
+  return fetch(url, {
+    method: method ?? "GET",
+    body: JSON.stringify({ ...restArgs }),
+  }).then((res) => res.json());
+}
+
+export default function PostList() {
+  const {
+    data,
+    trigger: triggerAdd,
+    isMutating,
+  } = useSWRMutation("/api/posts", fetcher, { revalidate: true });
+
+  const {
+    data: deletedData,
+    trigger: triggerDelete,
+    isMutating: isMutatingDelete,
+  } = useSWRMutation("/api/posts", fetcher, { revalidate: true });
+
+  const {
+    data: posts,
+    isError,
+    isValidating,
+  } = useService<IPost[]>({
+    url: "/api/posts",
+    watchers: { data, deletedData },
+    options: { dedupingInterval: 60000 * 60 },
+  });
 
   const onDelete = async (postId: string) => {
-    setLoading(true);
     try {
-      await fetch("/api/posts", {
-        method: "DELETE",
-        body: JSON.stringify({ _id: postId }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      await triggerDelete({ _id: postId, method: "DELETE" });
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
-      setSignal((x) => !x);
       toast.success("Post has been deleted successfully");
     }
   };
 
   const onAdd = async (values: z.infer<typeof postSchema>) => {
-    const { description, image, tags } = values;
-    setLoading(true);
+    const { description, image, tags = [] } = values;
     const payload: z.infer<typeof postSchema> = { description };
 
     if (image instanceof File) {
@@ -69,28 +86,20 @@ export default function PostList() {
     }
 
     try {
-      const response = await fetch("/api/posts", {
-        method: "POST",
-        headers: { "Content-Type": "multipart/form-data" },
-        body: JSON.stringify(payload),
-      });
-      if (response.ok) {
-      } else {
-        console.error("Failed to add post");
-      }
+      await triggerAdd({ ...payload, method: "POST" });
     } catch (error) {
       console.error("Error:", error);
     } finally {
-      setLoading(false);
-      setSignal((x) => !x);
       toast.success("Post has been created successfully");
     }
   };
 
+  if (isError) return <p>Error</p>;
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
       <PostForm onAdd={onAdd} />
-      {loading ? (
+      {isValidating || isMutating || isMutatingDelete || !posts ? (
         <SkeletonPost />
       ) : (
         posts.length > 0 &&
