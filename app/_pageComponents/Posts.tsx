@@ -6,9 +6,11 @@ import { toast } from "sonner";
 import z from "zod";
 import { postSchema } from "../_zod/schemas";
 import { toBase64 } from "@/lib/utils";
-import useService from "@/hooks/useService";
 import useSWRMutation from "swr/mutation";
 import { HTTP_METHOD } from "next/dist/server/web/http";
+import useSWRInfinite from "swr/infinite";
+import { Button } from "@/components/ui/button";
+import { Loader2, MoreHorizontal } from "lucide-react";
 
 export interface IPost {
   _id: string;
@@ -39,6 +41,7 @@ async function fetcher(
     body: JSON.stringify({ ...restArgs }),
   }).then((res) => res.json());
 }
+const infiniteFetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function PostList() {
   const {
@@ -53,15 +56,21 @@ export default function PostList() {
     isMutating: isMutatingDelete,
   } = useSWRMutation("/api/posts", fetcher, { revalidate: true });
 
+  const getKey = (pageIndex: number, previousPageData: IPost[]) => {
+    if (previousPageData && !previousPageData.length) return null; // no more data
+    return [`/api/posts?limit=2&skip=${pageIndex * 2}`, Object.values({ data, deletedData })];
+  };
+
   const {
-    data: posts,
-    isError,
+    data: resData,
+    size,
+    setSize,
     isValidating,
-  } = useService<IPost[]>({
-    url: "/api/posts",
-    watchers: { data, deletedData },
-    options: { dedupingInterval: 60000 * 60 },
+  } = useSWRInfinite<IPost[]>(getKey, infiniteFetcher, {
+    revalidateOnFocus: false,
+    dedupingInterval: 60000 * 60,
   });
+  const posts = resData ? ([] as IPost[]).concat(...resData) : [];
 
   const onDelete = async (postId: string) => {
     try {
@@ -94,19 +103,27 @@ export default function PostList() {
     }
   };
 
-  if (isError) return <p>Error</p>;
-
+  const isReachingEnd =
+    (posts && posts.length < 2) || (resData && resData[resData?.length - 1].length === 0);
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-      <PostForm onAdd={onAdd} />
-      {isValidating || isMutating || isMutatingDelete || !posts ? (
-        <SkeletonPost />
-      ) : (
-        posts.length > 0 &&
-        posts
-          .toSorted((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-          .map((post) => <Post key={post._id} post={post} onDelete={onDelete} />)
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+        <PostForm onAdd={onAdd} />
+        {isValidating || isMutating || isMutatingDelete || !posts ? (
+          <SkeletonPost />
+        ) : (
+          posts.length > 0 &&
+          posts.map((post) => <Post key={post._id} post={post} onDelete={onDelete} />)
+        )}
+      </div>
+      {!isReachingEnd && (
+        <div className="flex justify-center my-10">
+          <Button onClick={() => setSize(size + 1)} disabled={isValidating}>
+            Load More
+            {!isValidating ? <MoreHorizontal /> : <Loader2 className="animate-spin" />}
+          </Button>
+        </div>
       )}
-    </div>
+    </>
   );
 }

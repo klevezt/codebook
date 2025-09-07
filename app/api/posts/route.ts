@@ -1,10 +1,18 @@
 import connectDB from "@/lib/mongodb";
 import Post from "@/models/post";
 
-export async function GET() {
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const limit = parseInt(searchParams.get("limit") || "6");
+  const skip = parseInt(searchParams.get("skip") || "0");
+
   await connectDB();
-  const todos = await Post.find();
-  return Response.json(todos);
+  const posts = await Post.find()
+    .sort({ createdAt: -1 }) // newest first
+    .skip(skip)
+    .limit(limit);
+
+  return Response.json(posts);
 }
 
 export async function POST(req: Request) {
