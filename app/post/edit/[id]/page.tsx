@@ -1,33 +1,77 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Textarea } from "@/components/ui/textarea";
-import { postSchema } from "../_zod/schemas";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import useService from "@/hooks/useService";
+import { CircleArrowLeft, Save, X } from "lucide-react";
 import Image from "next/image";
-import { X } from "lucide-react";
+import { use, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { IPost } from "@/app/_pageComponents/Posts";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { postSchema } from "@/app/_zod/schemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
+import { toBase64 } from "@/lib/utils";
 
-export function PostForm({ onAdd }: { onAdd: (values: z.infer<typeof postSchema>) => void }) {
-  const [preview, setPreview] = useState<string | null>(null);
-  const [tags, setTags] = useState<string[]>([]);
+const SinglePost = ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = use(params);
+  const router = useRouter();
+
+  const { data, isLoading } = useService<IPost[]>({ url: `/api/single-post/${id}` });
+
+  if (isLoading) return <div>Loading...</div>;
+
+  return (
+    <>
+      <Button onClick={() => router.back()} variant="link" className="mb-4">
+        <CircleArrowLeft />
+        Back
+      </Button>
+      {data && (
+        <div className="relative bg-muted-foreground/10 p-5 md:p-8 rounded-2xl flex justify-center flex-col md:flex-row gap-2 md:gap-5 ">
+          <SinglePostForm data={data[0]} />
+        </div>
+      )}
+    </>
+  );
+};
+
+const SinglePostForm = ({ data }: { data: IPost }) => {
+  const { description, image, tags } = data;
+
   const [tagValue, setTagValue] = useState("");
+  const [preview, setPreview] = useState(image);
+  const [formTags, setTags] = useState<string[]>(tags);
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof postSchema>>({
     resolver: zodResolver(postSchema),
     defaultValues: {
-      description: "",
-      tags: [],
-      image: "",
+      description,
+      tags,
+      image,
     },
   });
 
@@ -44,23 +88,36 @@ export function PostForm({ onAdd }: { onAdd: (values: z.infer<typeof postSchema>
       setPreview(URL.createObjectURL(e.dataTransfer.files[0]));
     }
   };
+
   const removeTag = (tag: string) => setTags((prev) => prev.filter((el) => el !== tag));
+
+  const onUpdate = async (values: z.infer<typeof postSchema>) => {
+    const { description, image, tags: xTags } = values;
+    const payload: z.infer<typeof postSchema> = { description };
+
+    if (image instanceof File) {
+      payload.image = await toBase64(image);
+    }
+
+    if (xTags && xTags.length > 0) {
+      payload.tags = xTags;
+    }
+
+    toast.success("Post has been updated successfully");
+  };
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit((values) => {
-          onAdd({ ...values, tags });
-          form.reset();
-          setPreview("");
-          setTags([]);
+          onUpdate({ ...values, tags: formTags });
         })}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault();
           }
         }}
-        className="space-y-8"
+        className="w-full md:w-1/2"
         encType="multipart/form-data"
       >
         <Card>
@@ -71,7 +128,6 @@ export function PostForm({ onAdd }: { onAdd: (values: z.infer<typeof postSchema>
                   src="https://cdn.shadcnstudio.com/ss-assets/avatar/avatar-5.png"
                   alt="Avatar"
                 />
-                <AvatarFallback className="text-xs">PG</AvatarFallback>
               </Avatar>
               <div className="flex flex-col gap-0.5">
                 <CardTitle className="flex items-center gap-1 text-sm">Klev Dev</CardTitle>
@@ -149,10 +205,12 @@ export function PostForm({ onAdd }: { onAdd: (values: z.infer<typeof postSchema>
             <FormField
               control={form.control}
               name="description"
+              defaultValue={description}
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Description" className="max-h-10" {...field} />
+                    <Textarea className="max-h-20" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -174,29 +232,37 @@ export function PostForm({ onAdd }: { onAdd: (values: z.infer<typeof postSchema>
                   />
                 </FormControl>
               </FormItem>
-              {tags.length > 0 && (
-                <div className="flex gap-2 flex-wrap">
-                  {tags.map((tag) => (
-                    <Badge
-                      variant="secondary"
-                      className="flex justify-between items-center text-md "
-                      key={tag}
-                    >
-                      {tag}
-                      <span className="hover:cursor-pointer text-md" onClick={() => removeTag(tag)}>
-                        <X size="12" />
-                      </span>
-                    </Badge>
-                  ))}
-                </div>
-              )}
+              <div className="flex gap-2 flex-wrap items-center">
+                <span>Tags:</span>
+                {formTags?.map((tag) => (
+                  <Badge
+                    variant="secondary"
+                    className="flex justify-between items-center text-md "
+                    key={tag}
+                  >
+                    {tag}
+                    <span className="hover:cursor-pointer text-md" onClick={() => removeTag(tag)}>
+                      <X size="12" />
+                    </span>
+                  </Badge>
+                ))}
+              </div>
             </>
-            <Button size="sm" type="submit">
-              Submit
-            </Button>
           </CardContent>
+
+          <CardFooter className="gap-2">
+            <Button size="sm" type="submit">
+              Save <Save />
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => router.back()}>
+              Cancel
+              <CircleArrowLeft />
+            </Button>
+          </CardFooter>
         </Card>
       </form>
     </Form>
   );
-}
+};
+
+export default SinglePost;

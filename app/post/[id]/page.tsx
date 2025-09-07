@@ -1,10 +1,11 @@
 "use client";
+
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import useService from "@/hooks/useService";
 import { CircleArrowLeft } from "lucide-react";
 import Image from "next/image";
-import { use, useState } from "react";
+import { use } from "react";
 import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
@@ -12,21 +13,16 @@ import { CardDescription, CardTitle } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { IPost } from "@/app/_pageComponents/Posts";
-import Lightbox from "yet-another-react-lightbox";
-import Zoom from "yet-another-react-lightbox/plugins/zoom";
-import NextJsImage from "@/app/_components/molecules/Image";
-import "yet-another-react-lightbox/styles.css";
 
 const SinglePost = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);
   const router = useRouter();
-  const [open, setOpen] = useState(false);
 
-  const { data, isError, isLoading } = useService(`/api/single-post/${id}`);
+  const { data, isError, isLoading } = useService<IPost[]>({ url: `/api/single-post/${id}` });
 
-  if (isLoading) return <div>Loading...</div>;
+  if (!data || isLoading) return <div>Loading...</div>;
 
-  const { description, image, createdAt, tags } = (data[0] ?? {}) as IPost;
+  const { description, image, createdAt, tags } = data[0] ?? {};
 
   return (
     <>
@@ -34,7 +30,7 @@ const SinglePost = ({ params }: { params: Promise<{ id: string }> }) => {
         <CircleArrowLeft />
         Back
       </Button>
-      <div className="bg-muted-foreground/10 p-5 md:p-8 rounded-2xl flex justify-center flex-col md:flex-row gap-2 md:gap-5 ">
+      <div className="relative bg-muted-foreground/10 p-5 md:p-8 rounded-2xl flex justify-center flex-col md:flex-row gap-2 md:gap-5 ">
         <div className="flex md:hidden items-center gap-3">
           <Avatar className="ring-ring ring-2">
             <AvatarImage
@@ -55,23 +51,11 @@ const SinglePost = ({ params }: { params: Promise<{ id: string }> }) => {
           <>
             <div className="basis-full md:basis-1/2 h-fit bg-foreground rounded-2xl">
               <AspectRatio ratio={1}>
-                <Lightbox
-                  open={open}
-                  close={() => setOpen(false)}
-                  plugins={[Zoom]}
-                  slides={[{ src: image, height: 200, width: 200 }]}
-                  zoom={{
-                    maxZoomPixelRatio: 2,
-                  }}
-                  render={{ slide: NextJsImage, buttonPrev: () => null, buttonNext: () => null }}
-                  carousel={{ finite: true }}
-                />
                 <Image
                   src={image}
                   alt="Banner"
-                  className="rounded-md object-contain"
+                  className="rounded-md object-contain transition-all duration-3000 "
                   fill
-                  onClick={() => setOpen(true)}
                 />
               </AspectRatio>
             </div>
@@ -98,7 +82,7 @@ const SinglePost = ({ params }: { params: Promise<{ id: string }> }) => {
           </div>
           <p className="whitespace-pre-line">{description}</p>
           {tags.length > 0 && (
-            <div className="flex items-center gap-2 text-xs mt-10">
+            <div className="flex flex-wrap items-center gap-2 text-xs mt-10">
               {tags.map((tag) => (
                 <Badge
                   variant="secondary"

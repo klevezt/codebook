@@ -51,9 +51,11 @@ const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="outline" size="icon" aria-label="Toggle menu" className="border-0">
-                <PencilLine className="size-4" />
-              </Button>
+              <Link href={`/post/edit/${post._id}`}>
+                <Button variant="outline" size="icon" aria-label="Toggle menu" className="border-0">
+                  <PencilLine className="size-4" />
+                </Button>
+              </Link>
             </TooltipTrigger>
             <TooltipContent>
               <p>Edit post</p>
@@ -87,7 +89,7 @@ const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }
             />
           </AspectRatio>
         )}
-        <p className="line-clamp-8 whitespace-pre-line ">{post.description}</p>
+        <p className="line-clamp-5 whitespace-pre-line ">{post.description}</p>
         {post.tags.length > 0 && (
           <div className="flex items-center gap-2 text-xs">
             <span>Tags:</span>

@@ -39,9 +39,7 @@ const Header: React.FC = () => {
       {menuOpen && (
         <div className="md:hidden bg-white shadow-md">
           <nav className="flex flex-col space-y-4 p-4">
-            <a href="#home" className="text-gray-700 hover:text-indigo-600">
-              Posts
-            </a>
+            <SearchInput />
           </nav>
         </div>
       )}
