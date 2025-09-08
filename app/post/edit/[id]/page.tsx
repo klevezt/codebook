@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { AspectRatio } from "@/components/ui/aspect-ratio";
@@ -33,15 +34,25 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { toBase64 } from "@/lib/utils";
+import { fetcher, toBase64 } from "@/lib/utils";
+import useSWRMutation, { TriggerWithArgs } from "swr/mutation";
+import { HTTP_METHOD } from "next/dist/server/web/http";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const SinglePost = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);
   const router = useRouter();
 
-  const { data, isValidating } = useService<IPost[]>({ url: `/api/single-post/${id}` });
+  const {
+    data: updatedData,
+    trigger: triggerUpdate,
+    isMutating: isMutatingUpdate,
+  } = useSWRMutation("/api/posts", fetcher, { revalidate: true });
 
-  if (isValidating) return <div>Loading...</div>;
+  const { data, isValidating } = useService<IPost[]>({
+    url: `/api/single-post/${id}`,
+    watchers: { updatedData },
+  });
 
   return (
     <>
@@ -49,16 +60,32 @@ const SinglePost = ({ params }: { params: Promise<{ id: string }> }) => {
         <CircleArrowLeft />
         Back
       </Button>
-      {data && (
-        <div className="relative bg-muted-foreground/10 p-5 md:p-8 rounded-2xl flex justify-center flex-col md:flex-row gap-2 md:gap-5 ">
-          <SinglePostForm data={data[0]} />
-        </div>
-      )}
+      <div className="relative bg-muted-foreground/10 p-5 md:p-8 rounded-2xl flex justify-center flex-col md:flex-row gap-2 md:gap-5 ">
+        {!isMutatingUpdate && !isValidating && data && (
+          <SinglePostForm data={data[0]} id={id} triggerUpdate={triggerUpdate} />
+        )}
+        {(isMutatingUpdate || isValidating) && <SinglePostSkeleton />}
+      </div>
     </>
   );
 };
 
-const SinglePostForm = ({ data }: { data: IPost }) => {
+const SinglePostForm = ({
+  data,
+  id,
+  triggerUpdate,
+}: {
+  data: IPost;
+  id: string;
+  triggerUpdate: TriggerWithArgs<
+    any,
+    any,
+    "/api/posts",
+    {
+      method: HTTP_METHOD;
+    }
+  >;
+}) => {
   const { description, image, tags } = data;
 
   const [tagValue, setTagValue] = useState("");
@@ -92,16 +119,16 @@ const SinglePostForm = ({ data }: { data: IPost }) => {
   const removeTag = (tag: string) => setTags((prev) => prev.filter((el) => el !== tag));
 
   const onUpdate = async (values: z.infer<typeof postSchema>) => {
-    const { description, image, tags: xTags } = values;
-    const payload: z.infer<typeof postSchema> = { description };
+    const { description, image } = values;
+    const payload: z.infer<typeof postSchema> = { description, _id: id };
 
     if (image instanceof File) {
       payload.image = await toBase64(image);
     }
 
-    if (xTags && xTags.length > 0) {
-      payload.tags = xTags;
-    }
+    payload.tags = formTags;
+
+    await triggerUpdate({ method: "PUT", ...payload });
 
     toast.success("Post has been updated successfully");
   };
@@ -232,21 +259,23 @@ const SinglePostForm = ({ data }: { data: IPost }) => {
                   />
                 </FormControl>
               </FormItem>
-              <div className="flex gap-2 flex-wrap items-center">
-                <span>Tags:</span>
-                {formTags?.map((tag) => (
-                  <Badge
-                    variant="secondary"
-                    className="flex justify-between items-center text-md "
-                    key={tag}
-                  >
-                    {tag}
-                    <span className="hover:cursor-pointer text-md" onClick={() => removeTag(tag)}>
-                      <X size="12" />
-                    </span>
-                  </Badge>
-                ))}
-              </div>
+              {formTags && formTags.length > 0 && (
+                <div className="flex gap-2 flex-wrap items-center">
+                  <span>Tags:</span>
+                  {formTags.map((tag) => (
+                    <Badge
+                      variant="secondary"
+                      className="flex justify-between items-center text-md "
+                      key={tag}
+                    >
+                      {tag}
+                      <span className="hover:cursor-pointer text-md" onClick={() => removeTag(tag)}>
+                        <X size="12" />
+                      </span>
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </>
           </CardContent>
 
@@ -264,5 +293,41 @@ const SinglePostForm = ({ data }: { data: IPost }) => {
     </Form>
   );
 };
+
+// #region Skeleton
+
+export const SinglePostSkeleton = () => {
+  return (
+    <Card className="w-full md:w-1/2">
+      <CardHeader className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <Avatar>
+            <Skeleton className="h-[200px] w-full rounded-full" />
+          </Avatar>
+          <div className="flex flex-col gap-0.5 w-[80px] ">
+            <CardTitle className="flex items-center gap-1 text-sm">
+              <Skeleton className="h-[12px] w-full rounded-md" />
+            </CardTitle>
+            <CardDescription>
+              <Skeleton className="h-[12px] w-full rounded-md" />
+            </CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-6 text-sm">
+        <Skeleton className="h-[300px] w-full rounded-md" />
+        <Skeleton className="h-[80px] w-full rounded-md" />
+        <Skeleton className="h-[40px] w-full rounded-md" />
+      </CardContent>
+
+      <CardFooter className="gap-2">
+        <Skeleton className="h-[30px] w-20 rounded-md" />
+        <Skeleton className="h-[30px] w-20 rounded-md" />
+      </CardFooter>
+    </Card>
+  );
+};
+
+// #endreginon Skeleton
 
 export default SinglePost;

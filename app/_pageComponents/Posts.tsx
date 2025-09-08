@@ -5,12 +5,12 @@ import { PostForm } from "../_components/PostForm";
 import { toast } from "sonner";
 import z from "zod";
 import { postSchema } from "../_zod/schemas";
-import { toBase64 } from "@/lib/utils";
+import { fetcher, getKey, toBase64 } from "@/lib/utils";
 import useSWRMutation from "swr/mutation";
-import { HTTP_METHOD } from "next/dist/server/web/http";
 import useSWRInfinite from "swr/infinite";
 import { Button } from "@/components/ui/button";
 import { Loader2, MoreHorizontal } from "lucide-react";
+import { useState } from "react";
 
 export interface IPost {
   _id: string;
@@ -21,29 +21,11 @@ export interface IPost {
   createdAt: Date;
 }
 
-async function fetcher(
-  url: string,
-  {
-    arg,
-  }: {
-    arg: {
-      method: HTTP_METHOD;
-      description?: string;
-      _id?: string;
-      tags?: string[];
-      image?: File;
-    };
-  }
-) {
-  const { method, ...restArgs } = arg;
-  return fetch(url, {
-    method: method ?? "GET",
-    body: JSON.stringify({ ...restArgs }),
-  }).then((res) => res.json());
-}
 const infiniteFetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function PostList() {
+  const [loadingPost, setLoadingPost] = useState(false);
+
   const {
     data,
     trigger: triggerAdd,
@@ -56,25 +38,27 @@ export default function PostList() {
     isMutating: isMutatingDelete,
   } = useSWRMutation("/api/posts", fetcher, { revalidate: true });
 
-  const getKey = (pageIndex: number, previousPageData: IPost[]) => {
-    if (previousPageData && !previousPageData.length) return null; // no more data
-    return [`/api/posts?limit=2&skip=${pageIndex * 2}`, Object.values({ data, deletedData })];
-  };
-
   const {
     data: resData,
     size,
     setSize,
     isValidating,
-  } = useSWRInfinite<IPost[]>(getKey, infiniteFetcher, {
-    revalidateOnFocus: false,
-    dedupingInterval: 60000 * 60,
-  });
+    isLoading,
+    mutate,
+  } = useSWRInfinite<IPost[]>(
+    (pageIndex, previousPageData) => getKey(pageIndex, previousPageData, { data, deletedData }),
+    infiniteFetcher,
+    {
+      dedupingInterval: 60000 * 60,
+      revalidateOnFocus: false,
+    }
+  );
+
   const posts = resData ? ([] as IPost[]).concat(...resData) : [];
 
   const onDelete = async (postId: string) => {
     try {
-      await triggerDelete({ _id: postId, method: "DELETE" });
+      await triggerDelete({ method: "DELETE", ...{ _id: postId } });
     } catch (err) {
       console.error(err);
     } finally {
@@ -95,7 +79,7 @@ export default function PostList() {
     }
 
     try {
-      await triggerAdd({ ...payload, method: "POST" });
+      await triggerAdd({ method: "POST", ...payload });
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -103,24 +87,33 @@ export default function PostList() {
     }
   };
 
-  const isReachingEnd =
-    (posts && posts.length < 2) || (resData && resData[resData?.length - 1].length === 0);
+  const loadMore = async () => {
+    setLoadingPost(true);
+
+    const nextPage = await infiniteFetcher(`/api/posts?limit=2&skip=${size * 2}`);
+    mutate([...(posts ?? []), nextPage], false);
+    setSize((prev) => prev + 1);
+    setLoadingPost(false);
+  };
+
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
         <PostForm onAdd={onAdd} />
-        {isValidating || isMutating || isMutatingDelete || !posts ? (
+        {isMutating || isMutatingDelete || !posts ? (
           <SkeletonPost />
         ) : (
           posts.length > 0 &&
           posts.map((post) => <Post key={post._id} post={post} onDelete={onDelete} />)
         )}
+        {loadingPost && <SkeletonPost />}
       </div>
-      {!isReachingEnd && (
+
+      {!loadingPost && (
         <div className="flex justify-center my-10">
-          <Button onClick={() => setSize(size + 1)} disabled={isValidating}>
+          <Button onClick={loadMore}>
             Load More
-            {!isValidating ? <MoreHorizontal /> : <Loader2 className="animate-spin" />}
+            {!loadingPost ? <MoreHorizontal /> : <Loader2 className="animate-spin" />}
           </Button>
         </div>
       )}

@@ -2,7 +2,14 @@ import { BookOpen, EllipsisIcon, PencilLine, Trash2 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -89,9 +96,9 @@ const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }
             />
           </AspectRatio>
         )}
-        <p className="line-clamp-5 whitespace-pre-line ">{post.description}</p>
+        <p className="line-clamp-5 whitespace-pre-line min-h-[60px]">{post.description}</p>
         {post.tags && post.tags.length > 0 && (
-          <div className="flex items-center gap-2 text-xs">
+          <div className="flex items-center gap-2 text-xs flex-wrap">
             <span>Tags:</span>
             {post.tags.map((tag) => (
               <Badge
@@ -133,9 +140,13 @@ export const SkeletonPost = () => {
           <Skeleton className="h-[20px] w-[50px] rounded-full" />
         </CardHeader>
         <CardContent className="space-y-6 text-sm">
-          <Skeleton className="h-[200px] w-full rounded mb-4" />
-          <Skeleton className="h-[50px] w-full rounded" />
+          <Skeleton className="h-[200px] w-full rounded-md mb-4" />
+          <Skeleton className="h-[60px] w-full rounded-md" />
+          <Skeleton className="h-[40px] w-full rounded-md" />
         </CardContent>
+        <CardFooter className="gap-2">
+          <Skeleton className="h-[30px] w-20 rounded-md" />
+        </CardFooter>
       </Card>
     </>
   );

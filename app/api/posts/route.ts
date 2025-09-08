@@ -21,7 +21,7 @@ export async function POST(req: Request) {
   const { description } = body;
   if (!description)
     return Response.json(
-      { success: false, message: "Description is required" },
+      { message: "Description is required" },
       {
         status: 400,
       }
@@ -29,7 +29,28 @@ export async function POST(req: Request) {
 
   const newPost = await Post.create({ ...body });
   return Response.json(
-    { success: false, data: newPost },
+    { data: newPost },
+    {
+      status: 201,
+    }
+  );
+}
+
+export async function PUT(req: Request) {
+  const body = await req.json();
+
+  const { description, _id } = body;
+  if (!description)
+    return Response.json(
+      { message: "Description is required" },
+      {
+        status: 400,
+      }
+    );
+
+  const newPost = await Post.findByIdAndUpdate(_id, { ...body }, { returnDocument: "after" });
+  return Response.json(
+    { data: newPost },
     {
       status: 201,
     }

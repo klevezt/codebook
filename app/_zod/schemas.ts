@@ -4,6 +4,7 @@ const FileSchema =
   typeof File !== "undefined" ? z.instanceof(File, { message: "Image must be a file" }) : z.any(); // fallback for Node.js (server)
 
 export const postSchema = z.object({
+  _id: z.string().optional(),
   description: z.string().min(2, {
     message: "Description must be at least 2 characters.",
   }),
