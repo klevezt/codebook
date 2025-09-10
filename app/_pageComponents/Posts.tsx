@@ -14,7 +14,7 @@ import { Loader2, MoreHorizontal } from "lucide-react";
 export interface IPost {
   _id: string;
   description: string;
-  completed: boolean;
+  favorite?: boolean;
   image?: string;
   tags: string[] | [];
   createdAt: Date;

@@ -147,6 +147,12 @@
   --shadow-2xl: var(--shadow-2xl);
 }
 
+.h-fill {
+  height: -webkit-fill-available;
+  height: -moz-available;
+  height: fill-available;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

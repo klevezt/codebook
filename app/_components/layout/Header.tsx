@@ -1,10 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Heart, Layers, Menu, X } from "lucide-react";
 import Image from "next/image";
 import { SearchInput } from "../molecules/Input";
 import Link from "next/link";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+} from "@/components/ui/navigation-menu";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 const Header: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -21,13 +29,46 @@ const Header: React.FC = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
-            <SearchInput />
-          </nav>
+          <NavigationMenu viewport={false} className="hidden sm:flex">
+            <NavigationMenuList className="flex gap-5">
+              <NavigationMenuItem>
+                <SearchInput />
+              </NavigationMenuItem>
+              <Separator orientation="vertical" className="h-fill" />
+              <NavigationMenuItem>
+                <NavigationMenuLink className="p-0" asChild>
+                  <Link href="/">
+                    <Button
+                      variant="outline"
+                      aria-label="Favorite"
+                      className="flex flex-row items-center gap-2 w-full"
+                    >
+                      <span className="hidden md:inline">Favorites</span>
+                      <Heart className="hover:text-white" />
+                    </Button>
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink className="p-0" asChild>
+                  <Link href="/">
+                    <Button
+                      variant="outline"
+                      aria-label="Favorite"
+                      className="flex flex-row items-center gap-2 w-full"
+                    >
+                      <span className="hidden md:inline">Collections</span>
+                      <Layers className="hover:text-white" />
+                    </Button>
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 text-gray-700 hover:text-indigo-600"
+            className="sm:hidden p-2 text-gray-700 hover:text-indigo-600"
             onClick={() => setMenuOpen(!menuOpen)}
           >
             {menuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -37,9 +78,44 @@ const Header: React.FC = () => {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white shadow-md">
+        <div className="sm:hidden bg-white shadow-md">
           <nav className="flex flex-col space-y-4 p-4">
-            <SearchInput />
+            <NavigationMenu viewport={false}>
+              <NavigationMenuList className="flex gap-5 flex-wrap">
+                <Separator orientation="vertical" className="hidden sm:block h-fill" />
+                <NavigationMenuItem>
+                  <NavigationMenuLink className="p-0" asChild>
+                    <Link href="/">
+                      <Button
+                        variant="outline"
+                        aria-label="Favorite"
+                        className="flex flex-row items-center gap-2 w-full"
+                      >
+                        <span className="inline sm:hidden">Favorites</span>
+                        <Heart className="hover:text-white" />
+                      </Button>
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink className="p-0" asChild>
+                    <Link href="/">
+                      <Button
+                        variant="outline"
+                        aria-label="Favorite"
+                        className="flex flex-row items-center gap-2 w-full"
+                      >
+                        <span className="inline sm:hidden ">Collections</span>
+                        <Layers className="hover:text-white" />
+                      </Button>
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <SearchInput />
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
           </nav>
         </div>
       )}

@@ -1,4 +1,4 @@
-import { BookOpen, EllipsisIcon, PencilLine, Trash2 } from "lucide-react";
+import { BookOpen, EllipsisIcon, Heart, PencilLine, Trash2 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -25,8 +25,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import Link from "next/link";
+import { useState } from "react";
 
 const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }) => {
+  const [isFavorite, setIsFavorite] = useState(post.favorite ?? false);
   return (
     <Card className="h-fit">
       <CardHeader className="flex items-center justify-between gap-3">
@@ -43,12 +45,12 @@ const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }
             <CardDescription>@klevdev</CardDescription>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-3">
           <Tooltip>
             <TooltipTrigger asChild>
               <Link href={`/post/${post._id}`}>
-                <Button variant="outline" size="icon" aria-label="Toggle menu" className="border-0">
-                  <BookOpen className="size-4" />
+                <Button variant="outline" size="icon" aria-label="Open post" className="border-0">
+                  <BookOpen className="size-5" />
                 </Button>
               </Link>
             </TooltipTrigger>
@@ -57,25 +59,35 @@ const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }
             </TooltipContent>
           </Tooltip>
           <Tooltip>
-            <TooltipTrigger asChild>
-              <Link href={`/post/edit/${post._id}`}>
-                <Button variant="outline" size="icon" aria-label="Toggle menu" className="border-0">
-                  <PencilLine className="size-4" />
-                </Button>
-              </Link>
+            <TooltipTrigger
+              className="hover:cursor-pointer"
+              onClick={() => setIsFavorite((x) => !x)}
+              asChild
+            >
+              <Heart
+                className="size-5"
+                fill={isFavorite ? "var(--primary)" : "white"}
+                stroke={isFavorite ? "var(--primary)" : "black"}
+              />
             </TooltipTrigger>
             <TooltipContent>
-              <p>Edit post</p>
+              <p>Favorite</p>
             </TooltipContent>
           </Tooltip>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" aria-label="Toggle menu" className="border-0">
-                <EllipsisIcon className="size-4" />
+              <Button variant="outline" size="icon" aria-label="Edit" className="border-0">
+                <EllipsisIcon className="size-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-34">
               <DropdownMenuGroup>
+                <DropdownMenuItem>
+                  <Link className="flex flex-1 gap-2" href={`/post/edit/${post._id}`}>
+                    <PencilLine />
+                    <span>Edit </span>
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem variant="destructive" onClick={() => onDelete(post._id)}>
                   <Trash2 />
                   <span>Delete</span>

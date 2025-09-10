@@ -3,7 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 // Define TypeScript interface for a Post
 export interface IPost extends Document {
   description: string;
-  completed: boolean;
+  favorite?: boolean;
   tags?: string[];
   image?: string;
 }
@@ -13,7 +13,7 @@ const PostSchema = new Schema<IPost>(
     description: { type: String, required: true },
     image: { type: String, default: "" },
     tags: { type: Array, default: [] },
-    completed: { type: Boolean, default: false },
+    favorite: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
