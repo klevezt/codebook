@@ -26,9 +26,16 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }) => {
   const [isFavorite, setIsFavorite] = useState(post.favorite ?? false);
+
+  const addFavorite = () => {
+    setIsFavorite((x) => !x);
+    toast.success(!isFavorite ? "Added to favorites" : "Removed from favorites");
+  };
+
   return (
     <Card className="h-fit">
       <CardHeader className="flex items-center justify-between gap-3">
@@ -50,7 +57,7 @@ const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }
             <TooltipTrigger asChild>
               <Link href={`/post/${post._id}`}>
                 <Button variant="outline" size="icon" aria-label="Open post" className="border-0">
-                  <BookOpen className="size-5" />
+                  <BookOpen className="size-5 md:size-4" />
                 </Button>
               </Link>
             </TooltipTrigger>
@@ -58,18 +65,18 @@ const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }
               <p>Open post</p>
             </TooltipContent>
           </Tooltip>
+          <Heart
+            className="hover:cursor-pointer size-5 md:size-4"
+            onClick={addFavorite}
+            fill={isFavorite ? "var(--primary)" : "white"}
+            stroke={isFavorite ? "var(--primary)" : "black"}
+          />
           <Tooltip>
             <TooltipTrigger
               className="hover:cursor-pointer"
               onClick={() => setIsFavorite((x) => !x)}
               asChild
-            >
-              <Heart
-                className="size-5"
-                fill={isFavorite ? "var(--primary)" : "white"}
-                stroke={isFavorite ? "var(--primary)" : "black"}
-              />
-            </TooltipTrigger>
+            ></TooltipTrigger>
             <TooltipContent>
               <p>Favorite</p>
             </TooltipContent>
@@ -77,19 +84,19 @@ const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon" aria-label="Edit" className="border-0">
-                <EllipsisIcon className="size-5" />
+                <EllipsisIcon className="size-5 md:size-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-34">
               <DropdownMenuGroup>
                 <DropdownMenuItem>
                   <Link className="flex flex-1 gap-2" href={`/post/edit/${post._id}`}>
-                    <PencilLine />
+                    <PencilLine className="size-5 md:size-4" />
                     <span>Edit </span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem variant="destructive" onClick={() => onDelete(post._id)}>
-                  <Trash2 />
+                  <Trash2 className="size-5 md:size-4" />
                   <span>Delete</span>
                 </DropdownMenuItem>
               </DropdownMenuGroup>

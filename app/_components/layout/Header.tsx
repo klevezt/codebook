@@ -68,57 +68,56 @@ const Header: React.FC = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="sm:hidden p-2 text-gray-700 hover:text-indigo-600"
+            className="sm:hidden p-2 text-primary hover:cursor-pointer"
             onClick={() => setMenuOpen(!menuOpen)}
           >
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+            {menuOpen ? <X className="size-5 md:size-4" /> : <Menu className="size-5 md:size-4" />}
           </button>
         </div>
       </div>
 
       {/* Mobile Menu */}
-      {menuOpen && (
-        <div className="sm:hidden bg-white shadow-md">
-          <nav className="flex flex-col space-y-4 p-4">
-            <NavigationMenu viewport={false}>
-              <NavigationMenuList className="flex gap-5 flex-wrap">
-                <Separator orientation="vertical" className="hidden sm:block h-fill" />
-                <NavigationMenuItem>
-                  <NavigationMenuLink className="p-0" asChild>
-                    <Link href="/">
-                      <Button
-                        variant="outline"
-                        aria-label="Favorite"
-                        className="flex flex-row items-center gap-2 w-full"
-                      >
-                        <span className="inline sm:hidden">Favorites</span>
-                        <Heart className="hover:text-white" />
-                      </Button>
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink className="p-0" asChild>
-                    <Link href="/">
-                      <Button
-                        variant="outline"
-                        aria-label="Favorite"
-                        className="flex flex-row items-center gap-2 w-full"
-                      >
-                        <span className="inline sm:hidden ">Collections</span>
-                        <Layers className="hover:text-white" />
-                      </Button>
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <SearchInput />
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
-          </nav>
-        </div>
-      )}
+      <div
+        className={`sm:hidden bg-white overflow-hidden transition-all duration-800 ease-in-out
+                   ${menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
+      >
+        <NavigationMenu viewport={false} className="flex flex-col space-y-4 p-4">
+          <NavigationMenuList className="flex gap-5 flex-wrap shadow-none">
+            <Separator orientation="vertical" className="hidden sm:block h-fill" />
+            <NavigationMenuItem>
+              <NavigationMenuLink className="p-0" asChild>
+                <Link href="/">
+                  <Button
+                    variant="outline"
+                    aria-label="Favorite"
+                    className="flex flex-row items-center gap-2 w-full"
+                  >
+                    <span className="inline sm:hidden">Favorites</span>
+                    <Heart className="size-5 md:size-4 hover:text-white" />
+                  </Button>
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuLink className="p-0" asChild>
+                <Link href="/">
+                  <Button
+                    variant="outline"
+                    aria-label="Favorite"
+                    className="flex flex-row items-center gap-2 w-full"
+                  >
+                    <span className="inline sm:hidden ">Collections</span>
+                    <Layers className="size-5 md:size-4 hover:text-white" />
+                  </Button>
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <SearchInput />
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
     </header>
   );
 };
