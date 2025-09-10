@@ -10,7 +10,6 @@ import useSWRMutation from "swr/mutation";
 import useSWRInfinite from "swr/infinite";
 import { Button } from "@/components/ui/button";
 import { Loader2, MoreHorizontal } from "lucide-react";
-import { useState } from "react";
 
 export interface IPost {
   _id: string;
@@ -24,8 +23,6 @@ export interface IPost {
 const infiniteFetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function PostList() {
-  const [loadingPost, setLoadingPost] = useState(false);
-
   const {
     data,
     trigger: triggerAdd,
@@ -44,7 +41,6 @@ export default function PostList() {
     setSize,
     isValidating,
     isLoading,
-    mutate,
   } = useSWRInfinite<IPost[]>(
     (pageIndex, previousPageData) => getKey(pageIndex, previousPageData, { data, deletedData }),
     infiniteFetcher,
@@ -53,8 +49,10 @@ export default function PostList() {
       revalidateOnFocus: false,
     }
   );
-
-  const posts = resData ? ([] as IPost[]).concat(...resData) : [];
+  const loading = isLoading || isValidating;
+  console.log({ resData });
+  const posts = resData && !loading ? ([] as IPost[]).concat(...resData) : [];
+  // const posts = resData?.flatMap((p) => p.posts) ?? [];
 
   const onDelete = async (postId: string) => {
     try {
@@ -88,12 +86,8 @@ export default function PostList() {
   };
 
   const loadMore = async () => {
-    setLoadingPost(true);
-
-    const nextPage = await infiniteFetcher(`/api/posts?limit=2&skip=${size * 2}`);
-    mutate([...(posts ?? []), nextPage], false);
-    setSize((prev) => prev + 1);
-    setLoadingPost(false);
+    await infiniteFetcher(`/api/posts?limit=2&skip=${size * 2}`);
+    setSize(size + 1);
   };
 
   return (
@@ -106,17 +100,28 @@ export default function PostList() {
           posts.length > 0 &&
           posts.map((post) => <Post key={post._id} post={post} onDelete={onDelete} />)
         )}
-        {loadingPost && <SkeletonPost />}
+        {loading && (
+          <>
+            <SkeletonPost />
+            <SkeletonPost />
+          </>
+        )}
       </div>
 
-      {!loadingPost && (
-        <div className="flex justify-center my-10">
-          <Button onClick={loadMore}>
-            Load More
-            {!loadingPost ? <MoreHorizontal /> : <Loader2 className="animate-spin" />}
-          </Button>
-        </div>
-      )}
+      <div className="flex justify-center my-10">
+        <Button onClick={loadMore} disabled={loading}>
+          {!loading ? (
+            <>
+              Load More
+              <MoreHorizontal />
+            </>
+          ) : (
+            <>
+              Loading <Loader2 className="animate-spin" />
+            </>
+          )}
+        </Button>
+      </div>
     </>
   );
 }
