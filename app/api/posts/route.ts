@@ -12,10 +12,6 @@ export async function GET(req: Request) {
     .skip(skip)
     .limit(limit);
 
-  const total = await Post.find().countDocuments();
-
-  const hasMore = skip + limit < total;
-
   return Response.json(posts);
 }
 

@@ -18,7 +18,7 @@ const SinglePost = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);
   const router = useRouter();
 
-  const { data, isError, isValidating } = useService<IPost[]>({
+  const { data, isValidating } = useService<IPost[]>({
     url: `/api/single-post/${id}`,
     options: { dedupingInterval: 60000 * 60 },
   });

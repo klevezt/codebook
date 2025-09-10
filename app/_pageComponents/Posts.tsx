@@ -45,14 +45,11 @@ export default function PostList() {
     (pageIndex, previousPageData) => getKey(pageIndex, previousPageData, { data, deletedData }),
     infiniteFetcher,
     {
-      dedupingInterval: 60000 * 60,
       revalidateOnFocus: false,
     }
   );
   const loading = isLoading || isValidating;
-  console.log({ resData });
-  const posts = resData && !loading ? ([] as IPost[]).concat(...resData) : [];
-  // const posts = resData?.flatMap((p) => p.posts) ?? [];
+  const posts = resData ? ([] as IPost[]).concat(...resData) : [];
 
   const onDelete = async (postId: string) => {
     try {
@@ -86,8 +83,7 @@ export default function PostList() {
   };
 
   const loadMore = async () => {
-    await infiniteFetcher(`/api/posts?limit=2&skip=${size * 2}`);
-    setSize(size + 1);
+    await setSize(size + 1);
   };
 
   return (

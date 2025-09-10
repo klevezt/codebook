@@ -1,4 +1,3 @@
-import { IPost } from "@/app/_pageComponents/Posts";
 import { clsx, type ClassValue } from "clsx";
 import { HTTP_METHOD } from "next/dist/server/web/http";
 import { twMerge } from "tailwind-merge";
