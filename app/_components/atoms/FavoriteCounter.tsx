@@ -1,13 +1,18 @@
-import { IPost } from "@/app/_pageComponents/Posts";
+import { useFavorite } from "@/app/_store/zustand";
 import { Badge } from "@/components/ui/badge";
-import React from "react";
+import React, { useEffect } from "react";
 
-const FavoriteCounter = ({ favorites }: { favorites: IPost[] }) => {
+const FavoriteCounter = () => {
+  const { favorites, fetchFavorites } = useFavorite();
+  useEffect(() => {
+    fetchFavorites();
+  }, [fetchFavorites]);
+
   return (
     <>
       {/* {isValidating && <Skeleton className="w-5 h-full" />} */}
 
-      <Badge className="h-5 w-5 rounded-full px-1 ">{favorites.length}</Badge>
+      <Badge className="h-5 w-5 rounded-full px-1 ">{favorites}</Badge>
     </>
   );
 };

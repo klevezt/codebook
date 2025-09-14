@@ -48,7 +48,7 @@ const Header: React.FC = () => {
                     >
                       <span className="hidden md:inline">Favorites</span>
                       <Heart className="hover:text-white  size-4 " />
-                      <FavoriteCounter favorites={favorites} />
+                      <FavoriteCounter />
                     </Button>
                   </Link>
                 </NavigationMenuLink>

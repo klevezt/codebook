@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, Dispatch, useContext, useReducer } from "react";
-import { Action, State } from "../_store/store.types";
+import { Action, State } from "../_store/store";
 
 interface StateProviderProps {
   children: React.ReactNode;

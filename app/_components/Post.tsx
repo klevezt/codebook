@@ -28,24 +28,21 @@ import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useStateValue } from "../_providers/ContextProvider";
+import { useFavorite } from "../_store/zustand";
 
 const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }) => {
   const [isFavorite, setIsFavorite] = useState(post.favorite ?? false);
-  const [, dispatch] = useStateValue();
+  const favorites = useFavorite((state) => state.favorites);
+  const increase = useFavorite((state) => state.increase);
+  const remove = useFavorite((state) => state.remove);
 
   const addFavorite = () => {
     setIsFavorite((x) => !x);
     if (!isFavorite) {
-      dispatch({
-        type: "ADD_FAVORITE",
-        item: [post],
-      });
+      increase(favorites);
       toast.success("Added to favorites");
     } else {
-      dispatch({
-        type: "REMOVE_FAVORITE",
-        item: post,
-      });
+      remove(favorites);
       toast.info("Removed from favorites");
     }
   };
