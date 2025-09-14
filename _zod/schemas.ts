@@ -8,6 +8,7 @@ export const postSchema = z.object({
   description: z.string().min(2, {
     message: "Description must be at least 2 characters.",
   }),
+  isFavorite: z.boolean().optional(),
   tags: z.array(z.string()).optional(),
   image: z.union([
     FileSchema.refine((file) => file && file.size > 0 && file.size <= 5_000_000, {

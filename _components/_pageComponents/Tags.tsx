@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/_components/ui/badge";
 import { X } from "lucide-react";
 import React from "react";
 

@@ -40,6 +40,9 @@ export async function fetcher(
 }
 
 export const getKey = (pageIndex: number, previousPageData: [], watchers: object) => {
+  const limit = pageIndex === 0 ? 5 : 3;
+  const skip = pageIndex === 0 ? 0 : pageIndex === 1 ? 5 : pageIndex * limit + 2;
+
   if (previousPageData && !previousPageData.length) return null; // no more data
-  return [`/api/posts?limit=2&skip=${pageIndex * 2}`, Object.values({ ...watchers })];
+  return [`/api/posts?limit=${limit}&skip=${skip}`, Object.values({ ...watchers })];
 };

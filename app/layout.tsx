@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/sonner";
-import Header from "@/app/_components/layout/Header";
-import BackToTop from "./_pageComponents/BackToTop";
-import { StateProvider } from "./_providers/ContextProvider";
+import { Toaster } from "@/_components/ui/sonner";
+import Header from "@/_components/Header";
+import BackToTop from "../_components/_pageComponents/BackToTop";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,10 +28,8 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <StateProvider>
-          <Header />
-          <div className="max-w-7xl mx-auto py-8 px-2 sm:px-6 lg:px-8 ">{children}</div>
-        </StateProvider>
+        <Header />
+        <div className="max-w-7xl mx-auto py-8 px-2 sm:px-6 lg:px-8 ">{children}</div>
         <Toaster expand closeButton position="bottom-right" richColors />
         <BackToTop />
       </body>

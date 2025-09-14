@@ -3,23 +3,21 @@
 import React, { useState } from "react";
 import { Heart, Layers, Menu, X } from "lucide-react";
 import Image from "next/image";
-import { SearchInput } from "../molecules/Input";
+import { SearchInput } from "./molecules/Input";
 import Link from "next/link";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-} from "@/components/ui/navigation-menu";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { useStateValue } from "@/app/_providers/ContextProvider";
-import FavoriteCounter from "../atoms/FavoriteCounter";
+} from "@/_components/ui/navigation-menu";
+import { Button } from "@/_components/ui/button";
+import { Separator } from "@/_components/ui/separator";
+import FavoriteCounter from "./Counters/FavoriteCounter";
 
 const Header: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const [{ favorites }] = useStateValue();
   return (
     <header className="bg-white border-b border-b-primary">
       <div className="max-w-7xl mx-auto p-4 sm:px-6 lg:px-8">

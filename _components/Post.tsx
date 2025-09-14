@@ -1,7 +1,7 @@
 import { BookOpen, EllipsisIcon, Heart, PencilLine, Trash2 } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/_components/ui/avatar";
+import { Button } from "@/_components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,40 +9,37 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/_components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/_components/ui/dropdown-menu";
 
 import Image from "next/image";
-import { IPost } from "../_pageComponents/Posts";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { IPost } from "./_pageComponents/Posts";
+import { AspectRatio } from "@/_components/ui/aspect-ratio";
+import { Skeleton } from "@/_components/ui/skeleton";
+import { Badge } from "@/_components/ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/_components/ui/tooltip";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useStateValue } from "../_providers/ContextProvider";
 import { useFavorite } from "../_store/zustand";
 
 const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }) => {
-  const [isFavorite, setIsFavorite] = useState(post.favorite ?? false);
-  const favorites = useFavorite((state) => state.favorites);
-  const increase = useFavorite((state) => state.increase);
-  const remove = useFavorite((state) => state.remove);
+  const [isFavorite, setIsFavorite] = useState(post.isFavorite ?? false);
+  const { increase, remove } = useFavorite();
 
-  const addFavorite = () => {
+  const addFavorite = async () => {
     setIsFavorite((x) => !x);
     if (!isFavorite) {
-      increase(favorites);
+      increase(post._id);
       toast.success("Added to favorites");
     } else {
-      remove(favorites);
+      remove(post._id);
       toast.info("Removed from favorites");
     }
   };

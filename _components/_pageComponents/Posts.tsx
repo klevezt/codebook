@@ -1,20 +1,20 @@
 "use client";
 
-import Post, { SkeletonPost } from "../_components/Post";
-import { PostForm } from "../_components/PostForm";
+import Post, { SkeletonPost } from "../Post";
+import { PostForm } from "../PostForm";
 import { toast } from "sonner";
 import z from "zod";
-import { postSchema } from "../_zod/schemas";
+import { postSchema } from "../../_zod/schemas";
 import { fetcher, getKey, toBase64 } from "@/lib/utils";
 import useSWRMutation from "swr/mutation";
 import useSWRInfinite from "swr/infinite";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/_components/ui/button";
 import { Loader2, MoreHorizontal } from "lucide-react";
 
 export interface IPost {
   _id: string;
   description: string;
-  favorite?: boolean;
+  isFavorite?: boolean;
   image?: string;
   tags: string[] | [];
   createdAt: Date;

@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Button } from "@/components/ui/button";
-import useService from "@/hooks/useService";
+import { AspectRatio } from "@/_components/ui/aspect-ratio";
+import { Button } from "@/_components/ui/button";
+import useService from "@/_hooks/useService";
 import { CircleArrowLeft, Save, X } from "lucide-react";
 import Image from "next/image";
 import { use, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/_components/ui/avatar";
 import {
   Card,
   CardContent,
@@ -16,8 +16,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { IPost } from "@/app/_pageComponents/Posts";
+} from "@/_components/ui/card";
+import { IPost } from "@/_components/_pageComponents/Posts";
 import {
   Form,
   FormControl,
@@ -25,19 +25,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/_components/ui/form";
 import { useForm } from "react-hook-form";
-import { postSchema } from "@/app/_zod/schemas";
+import { postSchema } from "@/_zod/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
+import { Input } from "@/_components/ui/input";
+import { Textarea } from "@/_components/ui/textarea";
+import { Badge } from "@/_components/ui/badge";
 import { toast } from "sonner";
 import { fetcher, toBase64 } from "@/lib/utils";
 import useSWRMutation, { TriggerWithArgs } from "swr/mutation";
 import { HTTP_METHOD } from "next/dist/server/web/http";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/_components/ui/skeleton";
 
 const SinglePost = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);

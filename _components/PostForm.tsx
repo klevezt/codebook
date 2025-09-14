@@ -4,18 +4,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/_components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/_components/ui/form";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/_components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/_components/ui/avatar";
+import { Textarea } from "@/_components/ui/textarea";
 import { postSchema } from "../_zod/schemas";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { AspectRatio } from "@/_components/ui/aspect-ratio";
 import { useState } from "react";
 import Image from "next/image";
 import { X } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { Input } from "@/_components/ui/input";
+import { Badge } from "@/_components/ui/badge";
 
 export function PostForm({ onAdd }: { onAdd: (values: z.infer<typeof postSchema>) => void }) {
   const [preview, setPreview] = useState<string | null>(null);

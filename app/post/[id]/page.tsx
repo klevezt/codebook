@@ -1,18 +1,18 @@
 "use client";
 
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Button } from "@/components/ui/button";
-import useService from "@/hooks/useService";
+import { AspectRatio } from "@/_components/ui/aspect-ratio";
+import { Button } from "@/_components/ui/button";
+import useService from "@/_hooks/useService";
 import { CircleArrowLeft } from "lucide-react";
 import Image from "next/image";
 import { use } from "react";
 import { useRouter } from "next/navigation";
-import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { CardDescription, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/_components/ui/separator";
+import { Avatar, AvatarImage } from "@/_components/ui/avatar";
+import { CardDescription, CardTitle } from "@/_components/ui/card";
 import { formatDistanceToNow } from "date-fns";
-import { Badge } from "@/components/ui/badge";
-import { IPost } from "@/app/_pageComponents/Posts";
+import { Badge } from "@/_components/ui/badge";
+import { IPost } from "@/_components/_pageComponents/Posts";
 
 const SinglePost = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);
