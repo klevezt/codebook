@@ -13,10 +13,13 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useStateValue } from "@/app/_providers/ContextProvider";
+import FavoriteCounter from "../atoms/FavoriteCounter";
 
 const Header: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const [{ favorites }] = useStateValue();
   return (
     <header className="bg-white border-b border-b-primary">
       <div className="max-w-7xl mx-auto p-4 sm:px-6 lg:px-8">
@@ -44,7 +47,8 @@ const Header: React.FC = () => {
                       className="flex flex-row items-center gap-2 w-full"
                     >
                       <span className="hidden md:inline">Favorites</span>
-                      <Heart className="hover:text-white" />
+                      <Heart className="hover:text-white  size-4 " />
+                      <FavoriteCounter favorites={favorites} />
                     </Button>
                   </Link>
                 </NavigationMenuLink>

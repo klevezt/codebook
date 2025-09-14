@@ -27,13 +27,27 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useStateValue } from "../_providers/ContextProvider";
 
 const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }) => {
   const [isFavorite, setIsFavorite] = useState(post.favorite ?? false);
+  const [, dispatch] = useStateValue();
 
   const addFavorite = () => {
     setIsFavorite((x) => !x);
-    toast.success(!isFavorite ? "Added to favorites" : "Removed from favorites");
+    if (!isFavorite) {
+      dispatch({
+        type: "ADD_FAVORITE",
+        item: [post],
+      });
+      toast.success("Added to favorites");
+    } else {
+      dispatch({
+        type: "REMOVE_FAVORITE",
+        item: post,
+      });
+      toast.info("Removed from favorites");
+    }
   };
 
   return (
@@ -71,16 +85,6 @@ const Post = ({ post, onDelete }: { post: IPost; onDelete: (x: string) => void }
             fill={isFavorite ? "var(--primary)" : "white"}
             stroke={isFavorite ? "var(--primary)" : "black"}
           />
-          <Tooltip>
-            <TooltipTrigger
-              className="hover:cursor-pointer"
-              onClick={() => setIsFavorite((x) => !x)}
-              asChild
-            ></TooltipTrigger>
-            <TooltipContent>
-              <p>Favorite</p>
-            </TooltipContent>
-          </Tooltip>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon" aria-label="Edit" className="border-0">
