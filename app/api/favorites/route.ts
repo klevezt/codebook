@@ -1,7 +1,9 @@
 import { IPost } from "@/_components/_pageComponents/Posts";
 import Post from "@/_models/post";
+import connectDB from "@/lib/mongodb";
 
 export async function GET() {
+  await connectDB();
   const posts = await Post.find({ isFavorite: true }).sort({ createdAt: -1 }); // newest first
   return Response.json(posts);
 }

@@ -1,6 +1,8 @@
 import Post from "@/_models/post";
+import connectDB from "@/lib/mongodb";
 
 export async function GET(req: Request) {
+  await connectDB();
   const { searchParams } = new URL(req.url);
   const limit = parseInt(searchParams.get("limit") || "6");
   const skip = parseInt(searchParams.get("skip") || "0");
