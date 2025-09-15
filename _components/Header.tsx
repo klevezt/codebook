@@ -13,7 +13,7 @@ import {
 } from "@/_components/ui/navigation-menu";
 import { Button } from "@/_components/ui/button";
 import { Separator } from "@/_components/ui/separator";
-import FavoriteCounter from "./counters/FavoriteCounter";
+import FavoriteCounter from "./Counters/FavoriteCounter";
 
 const Header: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
